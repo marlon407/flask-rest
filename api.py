@@ -163,9 +163,8 @@ def get_category(id):
     return jsonify({'name': cat.name, 'views': cat.views, 'likes': cat.likes})
 
 @app.route('/api/categories')
-@auth.login_required
 def get_categories():
-	categories = Category.query.filter_by(user=g.user.id)
+	categories = Category.query.all()
 	return jsonify(json_list=[i.serialize for i in categories])
 
 @app.route('/api/pages', methods=['POST'])
