@@ -158,9 +158,10 @@ def new_category():
 @app.route('/api/categories/<int:id>')
 def get_category(id):
     cat = Category.query.get(id)
+    pages = Page.query.filter_by(category=cat.id)
     if not cat:
         abort(400)
-    return jsonify({'name': cat.name, 'views': cat.views, 'likes': cat.likes})
+    return jsonify({"category":cat.serialize,"pages":[i.serialize for i in pages] })
 
 @app.route('/api/categories')
 def get_categories():
