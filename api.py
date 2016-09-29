@@ -191,9 +191,10 @@ def get_page(id):
     return jsonify({'title': page.title, 'views': page.views, 'url': page.url})
 
 @app.route('/api/pages')
-@auth.login_required
+#@auth.login_required
 def get_pages():
-	pages = Page.query.filter_by(user=g.user.id)
+	#pages = Page.query.filter_by(user=g.user.id)
+	pages = Page.query.all()
 	return jsonify(json_list=[i.serialize for i in pages])
 
 @app.route('/api/pages/<int:id>', methods=['DELETE'])
