@@ -77,6 +77,7 @@ class Page(db.Model):
 	views = db.Column(db.Integer)
 	user = db.Column(db.Integer, db.ForeignKey('users.id'))
 
+
 	@property
 	def serialize(self):
 		"""Return object data in easily serializeable format"""
@@ -85,7 +86,7 @@ class Page(db.Model):
 			'title' : self.title,
 			'views' : self.views,
 			'url' : self.url,
-			'category' : Category.query.get(1).serialize,
+			'category' : self.category,
 			'user' : self.user
 		}
 
