@@ -55,7 +55,7 @@ class Category(db.Model):
 	user = db.Column(db.Integer, db.ForeignKey('users.id'))
 	views = db.Column(db.Integer)
 	likes = db.Column(db.Integer)
-    
+
 	@property
 	def serialize(self):
 		"""Return object data in easily serializeable format"""
@@ -66,7 +66,7 @@ class Category(db.Model):
 			'likes' : self.likes,
 			'user' : self.user
 		}
-	
+
 #Page model
 class Page(db.Model):
 	__tablename__ = 'pages'
@@ -76,7 +76,7 @@ class Page(db.Model):
 	url = db.Column(db.String(32))
 	views = db.Column(db.Integer)
 	user = db.Column(db.Integer, db.ForeignKey('users.id'))
-	
+
 	@property
 	def serialize(self):
 		"""Return object data in easily serializeable format"""
@@ -88,7 +88,7 @@ class Page(db.Model):
 			'category' : Category.query.get(1).serialize,
 			'user' : self.user
 		}
-	
+
 
 @auth.verify_password
 def verify_password(username_or_token, password):
@@ -164,9 +164,11 @@ def get_category(id):
     return jsonify({"category":cat.serialize,"pages":[i.serialize for i in pages] })
 
 @app.route('/api/categories')
+@auth.login_required
 def get_categories():
-	categories = Category.query.all()
-	return jsonify(json_list=[i.serialize for i in categories])
+	#categories = Category.query.all()
+    categories = Category.query.filter_by(user=g.user.id)
+    return jsonify(json_list=[i.serialize for i in categories])
 
 @app.route('/api/pages', methods=['POST'])
 @auth.login_required
@@ -192,10 +194,10 @@ def get_page(id):
     return jsonify({'title': page.title, 'views': page.views, 'url': page.url})
 
 @app.route('/api/pages')
-#@auth.login_required
+@auth.login_required
 def get_pages():
-	#pages = Page.query.filter_by(user=g.user.id)
-	pages = Page.query.all()
+	pages = Page.query.filter_by(user=g.user.id)
+	#pages = Page.query.all()
 	return jsonify(json_list=[i.serialize for i in pages])
 
 @app.route('/api/pages/<int:id>', methods=['DELETE'])
